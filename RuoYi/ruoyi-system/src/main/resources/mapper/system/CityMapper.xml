@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.weather.mapper.CityMapper">
+    
+    <resultMap type="com.ruoyi.weather.domain.City" id="CityResult">
+        <result property="id"    column="id"    />
+        <result property="cityen"    column="cityEn"    />
+        <result property="cityzh"    column="cityZh"    />
+        <result property="provinceen"    column="provinceEn"    />
+        <result property="provincezh"    column="provinceZh"    />
+        <result property="countryen"    column="countryEn"    />
+        <result property="countryzh"    column="countryZh"    />
+        <result property="leaderen"    column="leaderEn"    />
+        <result property="leaderzh"    column="leaderZh"    />
+        <result property="lat"    column="lat"    />
+        <result property="lon"    column="lon"    />
+    </resultMap>
+
+    <sql id="selectCityVo">
+        select id, cityEn, cityZh, provinceEn, provinceZh, countryEn, countryZh, leaderEn, leaderZh, lat, lon from city
+    </sql>
+
+    <select id="selectCityList" parameterType="com.ruoyi.weather.domain.City" resultMap="CityResult">
+        <include refid="selectCityVo"/>
+        <where>  
+            <if test="cityen != null  and cityen != ''"> and cityEn = #{cityen}</if>
+            <if test="cityzh != null  and cityzh != ''"> and cityZh = #{cityzh}</if>
+            <if test="provinceen != null  and provinceen != ''"> and provinceEn = #{provinceen}</if>
+            <if test="provincezh != null  and provincezh != ''"> and provinceZh = #{provincezh}</if>
+            <if test="countryen != null  and countryen != ''"> and countryEn = #{countryen}</if>
+            <if test="countryzh != null  and countryzh != ''"> and countryZh = #{countryzh}</if>
+            <if test="leaderen != null  and leaderen != ''"> and leaderEn = #{leaderen}</if>
+            <if test="leaderzh != null  and leaderzh != ''"> and leaderZh = #{leaderzh}</if>
+            <if test="lat != null  and lat != ''"> and lat = #{lat}</if>
+            <if test="lon != null  and lon != ''"> and lon = #{lon}</if>
+        </where>
+    </select>
+    
+    <select id="selectCityById" parameterType="String" resultMap="CityResult">
+        <include refid="selectCityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCity" parameterType="com.ruoyi.weather.domain.City">
+        insert into city
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="cityen != null  and cityen != ''">cityEn,</if>
+            <if test="cityzh != null  and cityzh != ''">cityZh,</if>
+            <if test="provinceen != null  and provinceen != ''">provinceEn,</if>
+            <if test="provincezh != null  and provincezh != ''">provinceZh,</if>
+            <if test="countryen != null  and countryen != ''">countryEn,</if>
+            <if test="countryzh != null  and countryzh != ''">countryZh,</if>
+            <if test="leaderen != null  and leaderen != ''">leaderEn,</if>
+            <if test="leaderzh != null  and leaderzh != ''">leaderZh,</if>
+            <if test="lat != null  and lat != ''">lat,</if>
+            <if test="lon != null  and lon != ''">lon,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="cityen != null  and cityen != ''">#{cityen},</if>
+            <if test="cityzh != null  and cityzh != ''">#{cityzh},</if>
+            <if test="provinceen != null  and provinceen != ''">#{provinceen},</if>
+            <if test="provincezh != null  and provincezh != ''">#{provincezh},</if>
+            <if test="countryen != null  and countryen != ''">#{countryen},</if>
+            <if test="countryzh != null  and countryzh != ''">#{countryzh},</if>
+            <if test="leaderen != null  and leaderen != ''">#{leaderen},</if>
+            <if test="leaderzh != null  and leaderzh != ''">#{leaderzh},</if>
+            <if test="lat != null  and lat != ''">#{lat},</if>
+            <if test="lon != null  and lon != ''">#{lon},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCity" parameterType="com.ruoyi.weather.domain.City">
+        update city
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityen != null  and cityen != ''">cityEn = #{cityen},</if>
+            <if test="cityzh != null  and cityzh != ''">cityZh = #{cityzh},</if>
+            <if test="provinceen != null  and provinceen != ''">provinceEn = #{provinceen},</if>
+            <if test="provincezh != null  and provincezh != ''">provinceZh = #{provincezh},</if>
+            <if test="countryen != null  and countryen != ''">countryEn = #{countryen},</if>
+            <if test="countryzh != null  and countryzh != ''">countryZh = #{countryzh},</if>
+            <if test="leaderen != null  and leaderen != ''">leaderEn = #{leaderen},</if>
+            <if test="leaderzh != null  and leaderzh != ''">leaderZh = #{leaderzh},</if>
+            <if test="lat != null  and lat != ''">lat = #{lat},</if>
+            <if test="lon != null  and lon != ''">lon = #{lon},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCityById" parameterType="String">
+        delete from city where id = #{id}
+    </delete>
+
+    <delete id="deleteCityByIds" parameterType="String">
+        delete from city where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
