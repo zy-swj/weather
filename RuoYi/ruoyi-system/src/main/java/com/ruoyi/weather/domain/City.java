@@ -5,6 +5,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 /**
  * 城市对象 city
  * 
@@ -58,14 +61,14 @@ public class City extends BaseEntity
     @Excel(name = "纬度", readConverterExp = "$column.readConverterExp()")
     private String lon;
 
-    public void setId(String id) 
-    {
-        this.id = id;
-    }
 
     public String getId() 
     {
         return id;
+    }
+    public void setId(String id)
+    {
+        this.id = id;
     }
     public void setCityen(String cityen) 
     {
@@ -76,14 +79,15 @@ public class City extends BaseEntity
     {
         return cityen;
     }
-    public void setCityzh(String cityzh) 
-    {
-        this.cityzh = cityzh;
-    }
+
 
     public String getCityzh() 
     {
         return cityzh;
+    }
+    public void setCityzh(String cityzh)
+    {
+        this.cityzh = cityzh;
     }
     public void setProvinceen(String provinceen) 
     {

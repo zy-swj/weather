@@ -1,6 +1,9 @@
 package com.ruoyi.framework.web.service;
 
 import java.util.List;
+
+import com.ruoyi.weather.domain.City;
+import com.ruoyi.weather.service.ICityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysDictData;
@@ -16,6 +19,8 @@ public class DictService
 {
     @Autowired
     private ISysDictDataService dictDataService;
+    @Autowired
+    private ICityService cityDataService;
 
     /**
      * 根据字典类型查询字典数据信息
@@ -28,6 +33,13 @@ public class DictService
         return dictDataService.selectDictDataByType(dictType);
     }
 
+    /**
+     *查询城市列表
+     * @return
+     */
+    public List<City> getCityType(){
+        return cityDataService.selectCityList(new City());
+    }
     /**
      * 根据字典类型和字典键值查询字典数据信息
      * 

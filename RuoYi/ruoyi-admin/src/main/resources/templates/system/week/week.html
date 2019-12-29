@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('七天天气')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: bootstrap-select-css" />
+</head>
+<script src="http://api.map.baidu.com/api?v=2.0&ak=y5pq8j2Otni3u77uk7BOVrp9N9STk3ND"></script>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <LI>
+                                <div class="form-group">
+                                    <label class="font-noraml">城市列表：</label>
+                                    <select class="form-control" th:with="type=${@dict.getCityType()}">
+                                        <option value="">所有</option>
+                                        <option th:each="city : ${type}" th:text="${city.cityzh+'('+city.cityen+')'}" th:value="${city.id}"></option>
+                                    </select>
+                                </div>
+                            </LI>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="findWeather()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                            <li> <label class="font-noraml">我的位置：<span id="myPosition">正在获取....</span></label></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                    <div class="col-md-6">
+                        <h3>天气</h3>
+                        <ul id="box"></ul>
+                        <h3>小时天气</h3>
+                        <ul id="hours"></ul>
+                    </div>
+                    <div class="col-md-6" >
+                        <h2>城市名称:<span id="rightCityName"></span></h2>
+                        <div id="rightBox"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+       // var editFlag = [[${@permission.hasPermi('system:city:edit')}]];
+      //  var removeFlag = [[${@permission.hasPermi('system:city:remove')}]];
+        var datas = [[${@dict.getType('sys_oper_type')}]];
+        var prefix = ctx + "system/week";
+        var layuiForm;
+            function findWeather(){
+                var cityId= $(".form-control").val();
+                var cityName = $(".form-control option:selected").text().split("(")[0];
+                $('#box').empty();
+                $('#hours').empty();
+                $('#rightBox').empty();
+            $.ajax({
+                type: 'GET',
+                url: 'https://www.tianqiapi.com/api/',
+                data: 'version=v1&appid=75279447&appsecret=KxodR2FL&cityid='+cityId,
+                dataType: 'JSON',
+                error: function () {
+                    alert('网络错误');
+                },
+                success: function (res) {
+                    var src="https://tianqiapi.com/api.php?style=tl&skin=pitaya&city="+cityName;
+                    $('#box').append('<li>City: ' + res.city + '</li>');
+                    $('#box').append('<li>Weather: ' + res.data[0].wea + '</li>');
+                    $('#box').append('<li>Tips: ' + res.data[0].air_tips + '</li>');
+                    $('#rightBox').append("<iframe scrolling='no' src='"+src+"'frameborder='0' width='290' height='260' allowtransparency='true'></iframe>");
+                    if(cityName=="所有"){
+                        cityName="济南";
+                    }
+                    $('#rightCityName').text(cityName);
+                    // 遍历数组
+                    for (var i = 0; i < res.data[0].hours.length; i++) {
+                        $('#hours').append('<li>' + (i + 1) + ': 时间: ' + res.data[0].hours[i].day + ' 气温: ' + res.data[0].hours[i].tem + ' </li >');
+                    }
+                }
+            });
+            }
+            //调用百度地图api
+           //创建百度地图控件
+           var geolocation = new BMap.Geolocation();
+           geolocation.getCurrentPosition(function(r){
+               if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                   //以指定的经度与纬度创建一个坐标点
+                   var pt = new BMap.Point(r.point.lng,r.point.lat);
+                   //创建一个地理位置解析器
+                   var geoc = new BMap.Geocoder();
+                   geoc.getLocation(pt, function(rs){//解析格式：城市，区县，街道
+                       var addComp = rs.addressComponents;
+                       $("#myPosition").text(addComp.city);
+                   });
+               }
+               else {
+                  alert('定位失败');
+               }
+           },{enableHighAccuracy: true})//指示浏览器获取高精度的位置，默认false
+    </script>
+     <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-js" />
+     <th:block th:include="include :: bootstrap-select-js" />
+</body>
+</html>
