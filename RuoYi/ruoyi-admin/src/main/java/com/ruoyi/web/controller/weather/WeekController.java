@@ -7,12 +7,16 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.weather.domain.City;
+import com.ruoyi.weather.domain.Weather;
+import com.ruoyi.weather.domain.WeatherData;
 import com.ruoyi.weather.service.ICityService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -27,10 +31,11 @@ import java.util.List;
 public class WeekController extends BaseController
 {
     private String prefix = "system/week";
-
+    @Autowired
+    private RestTemplate restTemplate;
     @Autowired
     private ICityService cityService;
-
+private static final String  WEATHER_URI="https://www.tianqiapi.com/api/?version=v1&appid=75279447&appsecret=KxodR2FL&cityid=";
     @RequiresPermissions("system:week:view")
     @GetMapping()
     public String city()
@@ -38,6 +43,17 @@ public class WeekController extends BaseController
         return prefix + "/week";
     }
 
+    /**
+     * 查询城市天气
+     * @return
+     */
+    @GetMapping("/findCityWeather")
+    @ResponseBody
+    public Weather cityWeather(String cityName, String cityId){
+        ResponseEntity<Weather> responseEntity= restTemplate.getForEntity(WEATHER_URI+cityId,Weather.class);
+        Weather weather =responseEntity.getBody();
+        return weather;
+    }
     /**
      * 查询城市列表
      */
